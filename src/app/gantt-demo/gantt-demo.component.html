@@ -1,0 +1,10 @@
+
+<div class="tool-bar">
+
+  <a (click)="changeScale(0)">日</a>
+  <a (click)="changeScale(1)">周</a>
+  <a (click)="changeScale(2)">月</a>
+
+</div>
+  <ng-gantt-chart [endMoment]="gantConfig.endMoment" [beginMoment]="gantConfig.beginMoment" [scaleUnit]="gantConfig.scaleUnit" ></ng-gantt-chart>
+
