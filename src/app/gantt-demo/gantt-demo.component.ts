@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GanttChartConfig } from 'component/gantt-chart/gantt-chart.define';
+import { GanttChartConfig } from 'component/gantt-chart';
+
 
 @Component({
   selector: 'app-gantt-demo',
