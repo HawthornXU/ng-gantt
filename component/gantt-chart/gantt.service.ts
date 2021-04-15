@@ -31,7 +31,7 @@ export class GanttService {
         x: ++offset,
         y: 2,
         text: monthString,
-        fill: GanttChartConfig.ColorConfig.DateTextColor
+        fill: GanttChartConfig.COLOR_CONFIG.DateTextColor
       },
     })
     zCanvas.add(text);
@@ -47,7 +47,7 @@ export class GanttService {
       },
       cursor: null,
       style: {
-        stroke: GanttChartConfig.ColorConfig.MonthLineColor,
+        stroke: GanttChartConfig.COLOR_CONFIG.MonthLineColor,
       }
     })
     zCanvas.add(line)
@@ -63,7 +63,7 @@ export class GanttService {
       },
       cursor: null,
       style: {
-        stroke: GanttChartConfig.ColorConfig.DateLineColor,
+        stroke: GanttChartConfig.COLOR_CONFIG.DateLineColor,
       }
     })
     zCanvas.add(line)
@@ -79,7 +79,7 @@ export class GanttService {
       },
       cursor: null,
       style: {
-        stroke: GanttChartConfig.ColorConfig.DateLineColor,
+        stroke: GanttChartConfig.COLOR_CONFIG.DateLineColor,
       }
     })
     zCanvas.add(line)
@@ -93,7 +93,7 @@ export class GanttService {
         text: dayString.toString(),
         fontSize: '12px',
         fontFamily: 'Microsoft YaHei',
-        fill: GanttChartConfig.ColorConfig.DateTextColor
+        fill: GanttChartConfig.COLOR_CONFIG.DateTextColor
       }
     })
     zCanvas.add(text);
@@ -111,7 +111,7 @@ export class GanttService {
         },
         cursor: null,
         style: {
-          stroke: GanttChartConfig.ColorConfig.WeekendColor,
+          stroke: GanttChartConfig.COLOR_CONFIG.WeekendColor,
           lineDash: [1,5],
           lineDashOffset:lineDashOffset
         }

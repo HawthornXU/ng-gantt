@@ -26,7 +26,7 @@ export module GanttChartConfig{
     isShowChilren?: boolean;
   }
 
-  export enum ColorConfig {
+  export enum COLOR_CONFIG {
     DateLineColor = '#e9edfa',
     DateTextColor = '#8a8e99',
     WeekendColor = '#e9edfa',
