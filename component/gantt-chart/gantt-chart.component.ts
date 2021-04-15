@@ -141,11 +141,7 @@ export class GanttChartComponent implements OnInit {
     }
 
     if (this.scaleUnit == GanttScaleUnit.day || getDay(handleDate) == 1) {
-      let fontOffsetX = 1
-      if (this.scaleUnit == GanttScaleUnit.day) {
-        fontOffsetX = dayString.toString().length > 1 ? 14 : 18;
-      }
-      this.ganttService.drawDayText(zCanvas, fontOffsetX+offset, dayString)
+      this.ganttService.drawDayText(zCanvas, offset, dayString,this.scaleUnit)
     }
 
   }

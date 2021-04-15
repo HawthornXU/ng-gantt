@@ -12,7 +12,7 @@ export class GanttService {
   getScaleUnitPixel(scaleUnit:GanttChartConfig.GanttScaleUnit) {
     switch (scaleUnit) {
       case GanttChartConfig.GanttScaleUnit.day:
-        return GanttChartConfig.BASIC_DAY_PIXEL * 7;
+        return GanttChartConfig.BASIC_DAY_PIXEL * 5;
         break;
       case  GanttChartConfig.GanttScaleUnit.week:
         return GanttChartConfig.BASIC_DAY_PIXEL * 2;
@@ -85,15 +85,16 @@ export class GanttService {
     zCanvas.add(line)
   }
 
-  drawDayText(zCanvas: ZRenderType, offset: number, dayString: number) {
+  drawDayText(zCanvas: ZRenderType, offset: number, dayString: number,scaleUnit:GanttChartConfig.GanttScaleUnit) {
     const text = new Text({
       style: {
-        x: offset,
+        x: offset+this.getScaleUnitPixel(scaleUnit)/2,
         y: 20,
         text: dayString.toString(),
         fontSize: '12px',
         fontFamily: 'Microsoft YaHei',
-        fill: GanttChartConfig.COLOR_CONFIG.DateTextColor
+        fill: GanttChartConfig.COLOR_CONFIG.DateTextColor,
+        align:'center'
       }
     })
     zCanvas.add(text);
