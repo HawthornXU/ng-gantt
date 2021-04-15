@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GanttChartConfig } from './gantt-chart.define';
 import { Line, Text, ZRenderType } from 'zrender';
+import GanttScaleUnit = GanttChartConfig.GanttScaleUnit;
 
 @Injectable()
 export class GanttService {
@@ -94,7 +95,7 @@ export class GanttService {
         fontSize: '12px',
         fontFamily: 'Microsoft YaHei',
         fill: GanttChartConfig.COLOR_CONFIG.DateTextColor,
-        align:'center'
+        align:scaleUnit==GanttScaleUnit.month?'left':'center',
       }
     })
     zCanvas.add(text);
