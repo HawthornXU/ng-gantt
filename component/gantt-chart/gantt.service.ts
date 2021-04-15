@@ -9,7 +9,7 @@ export class GanttService {
   }
 
 
-  getScaleUnitPixel(scaleUnit) {
+  getScaleUnitPixel(scaleUnit:GanttChartConfig.GanttScaleUnit) {
     switch (scaleUnit) {
       case GanttChartConfig.GanttScaleUnit.day:
         return GanttChartConfig.BASIC_DAY_PIXEL * 7;
@@ -32,7 +32,7 @@ export class GanttService {
         y: 2,
         text: monthString,
         fill: GanttChartConfig.ColorConfig.DateTextColor
-      }
+      },
     })
     zCanvas.add(text);
   }
@@ -97,6 +97,28 @@ export class GanttService {
       }
     })
     zCanvas.add(text);
+  }
+
+  drawNonworkdayBackground(zCanvas: ZRenderType, x: number,scaleUnit:GanttChartConfig.GanttScaleUnit) {
+    let scalePixel = this.getScaleUnitPixel(scaleUnit)
+    for(let lineDashOffset = 1;scalePixel>0;x++,scalePixel--,lineDashOffset++){
+      const line = new Line({
+        shape: {
+          x1: x + 0.5,
+          y1: 35.5,
+          x2: x + 0.5,
+          y2: window.screen.height * window.devicePixelRatio,
+        },
+        cursor: null,
+        style: {
+          stroke: GanttChartConfig.ColorConfig.WeekendColor,
+          lineDash: [1,5],
+          lineDashOffset:lineDashOffset
+        }
+      })
+      zCanvas.add(line)
+    }
+
   }
 }
 

@@ -129,20 +129,18 @@ export class GanttChartComponent implements OnInit {
     if (getDate(handleDate) == 1) {
       this.generateMonth(zCanvas, handleDate, offset)
     }
-    // if (getDay(handleDate) == 0 || getDay(handleDate) == 6) {
-    //   this.generateWeekend(ctx, offset)
-    // }
+    if (getDay(handleDate) == 0 || getDay(handleDate) == 6) {
+      this.generateWeekend(zCanvas, offset)
+    }
   }
 
   private generateDayScale(zCanvas: ZRenderType, offset: number, handleDate: Date) {
     const dayString = getDate(handleDate)
     if (this.scaleUnit == GanttScaleUnit.day || getDay(handleDate) == 1) {
-      // 画日期竖线
       this.ganttService.drawDateScaleLeftBorder(zCanvas, offset);
     }
 
     if (this.scaleUnit == GanttScaleUnit.day || getDay(handleDate) == 1) {
-      //画日期
       let fontOffsetX = 1
       if (this.scaleUnit == GanttScaleUnit.day) {
         fontOffsetX = dayString.toString().length > 1 ? 14 : 18;
@@ -160,22 +158,8 @@ export class GanttChartComponent implements OnInit {
     this.ganttService.drawMonthScaleLine(zCanvas, offset)
   }
 
-  // todo changeto zrender
-  private generateWeekend(ctx: CanvasRenderingContext2D, offset: number) {
-    const scalePixel = this.ganttService.getScaleUnitPixel(this.scaleUnit)
-    const yBegin = 35.5
-    const yOffset = 6
-    ctx.beginPath();
-    ctx.strokeStyle = GanttChartConfig.ColorConfig.WeekendColor;
-    for (let i = 6; scalePixel - i > 0; i += yOffset) {
-      ctx.moveTo(offset + i, yBegin)
-      ctx.lineTo(offset + scalePixel, yBegin - i + scalePixel)
-    }
-    // for (let i = 0; i < this.ganttCanvas.nativeElement.height; i += yOffset) {
-    //   ctx.moveTo(offset, yBegin + i)
-    //   ctx.lineTo(offset + scalePixel, yBegin + scalePixel + i);
-    // }
-    ctx.stroke();
+  private generateWeekend(zCanvas: ZRenderType, offset: number) {
+      this.ganttService.drawNonworkdayBackground(zCanvas,offset,this.scaleUnit)
   }
 
   private generateXscoroll() {
