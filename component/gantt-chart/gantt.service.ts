@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { GanttChartConfig } from './gantt-chart.define';
-import { Line, Text, ZRenderType } from 'zrender';
+import { Line, Text, ZRenderType, Group ,Rect } from 'zrender';
 import GanttScaleUnit = GanttChartConfig.GanttScaleUnit;
+import TASK_ROW_HEIGHT = GanttChartConfig.TASK_ROW_HEIGHT;
+import COLOR_CONFIG = GanttChartConfig.COLOR_CONFIG;
+import ELEMENT_Z_INDEX_TIER = GanttChartConfig.ELEMENT_Z_INDEX_TIER;
 
 @Injectable()
 export class GanttService {
@@ -10,7 +13,7 @@ export class GanttService {
   }
 
 
-  getScaleUnitPixel(scaleUnit:GanttChartConfig.GanttScaleUnit) {
+  getScaleUnitPixel(scaleUnit: GanttChartConfig.GanttScaleUnit) {
     switch (scaleUnit) {
       case GanttChartConfig.GanttScaleUnit.day:
         return GanttChartConfig.BASIC_DAY_PIXEL * 5;
@@ -26,7 +29,7 @@ export class GanttService {
     }
   }
 
-  drawMonthText(zCanvas: ZRenderType, offset: number, monthString: string) {
+  drawMonthText(offset: number, monthString: string):Text {
     const text = new Text({
       style: {
         x: ++offset,
@@ -35,11 +38,12 @@ export class GanttService {
         fill: GanttChartConfig.COLOR_CONFIG.DateTextColor
       },
     })
-    zCanvas.add(text);
+    return text
   }
 
-  drawMonthScaleLine(zCanvas: ZRenderType, offset: number) {
+  drawMonthScaleLine( offset: number):Line {
     const line = new Line({
+      z:ELEMENT_Z_INDEX_TIER.MonthScaleLine,
       shape: {
         x1: offset + 0.5,
         y1: 35.5,
@@ -51,10 +55,10 @@ export class GanttService {
         stroke: GanttChartConfig.COLOR_CONFIG.MonthLineColor,
       }
     })
-    zCanvas.add(line)
+    return line;
   }
 
-  drawDateScaleBottomBorder(zCanvas: ZRenderType, width:number) {
+  drawDateScaleBottomBorder(width: number):Line {
     const line = new Line({
       shape: {
         x1: 0,
@@ -67,10 +71,10 @@ export class GanttService {
         stroke: GanttChartConfig.COLOR_CONFIG.DateLineColor,
       }
     })
-    zCanvas.add(line)
+    return line
   }
 
-  drawDateScaleLeftBorder(zCanvas: ZRenderType, offset: number) {
+  drawDateScaleLeftBorder(offset: number): Line {
     const line = new Line({
       shape: {
         x1: offset + 0.5,
@@ -83,28 +87,32 @@ export class GanttService {
         stroke: GanttChartConfig.COLOR_CONFIG.DateLineColor,
       }
     })
-    zCanvas.add(line)
+    return line;
   }
 
-  drawDayText(zCanvas: ZRenderType, offset: number, dayString: number,scaleUnit:GanttChartConfig.GanttScaleUnit) {
+  drawDayText( offset: number, dayString: number, scaleUnit: GanttChartConfig.GanttScaleUnit):Text {
     const text = new Text({
       style: {
-        x: offset+this.getScaleUnitPixel(scaleUnit)/2,
+        x: offset + this.getScaleUnitPixel(scaleUnit) / 2,
         y: 20,
         text: dayString.toString(),
         fontSize: '12px',
         fontFamily: 'Microsoft YaHei',
         fill: GanttChartConfig.COLOR_CONFIG.DateTextColor,
-        align:scaleUnit==GanttScaleUnit.month?'left':'center',
+        align: scaleUnit == GanttScaleUnit.month ? 'left' : 'center',
       }
     })
-    zCanvas.add(text);
+    return text
   }
 
-  drawNonworkdayBackground(zCanvas: ZRenderType, x: number,scaleUnit:GanttChartConfig.GanttScaleUnit) {
-    let scalePixel = this.getScaleUnitPixel(scaleUnit)
-    for(let lineDashOffset = 1;scalePixel>0;x++,scalePixel--,lineDashOffset++){
+  drawNonworkdayBackground( x: number, scaleUnit: GanttChartConfig.GanttScaleUnit):Group {
+    let scalePixel = this.getScaleUnitPixel(scaleUnit);
+    const backgroundGroup = new Group({
+      silent:true,
+    })
+    for (let lineDashOffset = 1; scalePixel > 0; x++, scalePixel--, lineDashOffset++) {
       const line = new Line({
+        z:ELEMENT_Z_INDEX_TIER.NonWorkDayBackground,
         shape: {
           x1: x + 0.5,
           y1: 35.5,
@@ -114,13 +122,49 @@ export class GanttService {
         cursor: null,
         style: {
           stroke: GanttChartConfig.COLOR_CONFIG.WeekendColor,
-          lineDash: [1,5],
-          lineDashOffset:lineDashOffset
+          lineDash: [1, 5],
+          lineDashOffset: lineDashOffset
         }
       })
-      zCanvas.add(line)
+      backgroundGroup.add(line)
     }
+    return backgroundGroup;
 
+  }
+
+  drawTaskRowBackground(totalWidth: number):Group {
+    const rowBackgroundGroup = new Group()
+    for (let rowBeginY = 35.5; rowBeginY < window.screen.height; rowBeginY += TASK_ROW_HEIGHT) {
+      const rect = new Rect({
+        z:ELEMENT_Z_INDEX_TIER.TaskRowBackground,
+        style: {
+          fill: COLOR_CONFIG.TaskRowColor,
+          opacity: 0
+        },
+        shape: {
+          x: 0,
+          y: rowBeginY,
+          width: totalWidth,
+          height: TASK_ROW_HEIGHT,
+        },
+      });
+      rect.on('mouseout', e => {
+        rect.attr({
+          style:{
+            opacity: 0
+          }
+        })
+      })
+      rect.on('mouseover', e => {
+        rect.attr({
+          style:{
+            opacity: 1
+          }
+        })
+      })
+      rowBackgroundGroup.add(rect)
+    }
+    return rowBackgroundGroup
   }
 }
 

@@ -5,7 +5,7 @@ import { GanttService } from 'component/gantt-chart/gantt.service';
 import { fromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { differenceInDays, isSameDay, addDays, getDate, getDay, format } from 'date-fns';
-import { init, ZRenderType } from 'zrender'
+import { init, ZRenderType, Group } from 'zrender'
 
 @Component({
   selector: 'ng-gantt-chart',
@@ -15,7 +15,11 @@ import { init, ZRenderType } from 'zrender'
 })
 export class GanttChartComponent implements OnInit {
   @ViewChild('ganttCanvasContainer', {static: false}) ganttCanvasContainer: ElementRef;
-  render: ZRenderType = null
+  render: ZRenderType = null;
+  /****
+   * @description add all zElement be use to on Xscroll
+   */
+  xScrollGroup: Group = new Group({name:'xScrollGroup'})
   @ViewChild('Xscroll', {static: false}) xScroll: ElementRef;
 
   @Input() scaleUnit: GanttChartConfig.GanttScaleUnit = GanttChartConfig.GanttScaleUnit.day;
@@ -66,6 +70,7 @@ export class GanttChartComponent implements OnInit {
     this.generateXscoroll()
     this.initGantt();
     this.generateScaleData(this.beginMoment, this.endMoment);
+    this.generateTaskRow()
   }
 
   private addEventListenerByWindowResize() {
@@ -79,10 +84,7 @@ export class GanttChartComponent implements OnInit {
   private addEventListenerByXScrollElChange() {
     const xScrollEl = this.xScroll.nativeElement
     fromEvent(xScrollEl, 'scroll').pipe().subscribe((e: Event) => {
-      this.leftOffset = (e.target as Element).scrollLeft ?? 0;
-      this.render.clear()
-      this.generateScaleData(this.beginMoment, this.endMoment);
-
+      this.xScrollGroup.attr({x:-(e.target as Element).scrollLeft ?? 0})
     })
   }
 
@@ -110,52 +112,55 @@ export class GanttChartComponent implements OnInit {
 
   private generateScaleData(beginMoment: Date, endMoment: Date) {
     const render: ZRenderType = this.render
-    this.ganttService.drawDateScaleBottomBorder(render,this.ganttWidth)
+    const xScrollGroup = this.xScrollGroup;
+    xScrollGroup.add(this.ganttService.drawDateScaleBottomBorder(this.ganttWidth))
     if (beginMoment && endMoment) {
       let handleDate = beginMoment
       for (let index = 0; !isSameDay(handleDate, endMoment); index++) {
         const offset = index * this.ganttService.getScaleUnitPixel(this.scaleUnit) - this.leftOffset;
-        this.generateDate(render, handleDate, offset);
+        this.generateDate(xScrollGroup, handleDate, offset);
         handleDate = addDays(handleDate, 1,);
       }
     }
+    render.add(xScrollGroup)
   }
 
 
 
-  private generateDate(zCanvas: ZRenderType, handleDate: Date, offset: number) {
-    this.generateDayScale(zCanvas, offset, handleDate)
+  private generateDate(xScrollGroup: Group, handleDate: Date, offset: number) {
+    this.generateDayScale(xScrollGroup, offset, handleDate)
 
     if (getDate(handleDate) == 1) {
-      this.generateMonth(zCanvas, handleDate, offset)
+      this.generateMonth(xScrollGroup, handleDate, offset)
     }
     if (getDay(handleDate) == 0 || getDay(handleDate) == 6) {
-      this.generateWeekend(zCanvas, offset)
+      this.generateWeekend(xScrollGroup, offset)
     }
   }
 
-  private generateDayScale(zCanvas: ZRenderType, offset: number, handleDate: Date) {
+  private generateDayScale(xScrollGroup: Group, offset: number, handleDate: Date) {
     const dayString = getDate(handleDate)
     if (this.scaleUnit == GanttScaleUnit.day || getDay(handleDate) == 1) {
-      this.ganttService.drawDateScaleLeftBorder(zCanvas, offset);
+      xScrollGroup.add(this.ganttService.drawDateScaleLeftBorder(offset));
     }
 
     if (this.scaleUnit == GanttScaleUnit.day || getDay(handleDate) == 1) {
-      this.ganttService.drawDayText(zCanvas, offset, dayString,this.scaleUnit)
+      xScrollGroup.add(this.ganttService.drawDayText( offset, dayString,this.scaleUnit));
     }
 
   }
 
 
 
-  private generateMonth(zCanvas: ZRenderType, handleDate: Date, offset: number) {
+  private generateMonth(xScrollGroup: Group, handleDate: Date, offset: number) {
     const monthString = format(handleDate, 'yyyy-MM');
-    this.ganttService.drawMonthText(zCanvas, offset, monthString);
-    this.ganttService.drawMonthScaleLine(zCanvas, offset)
+    xScrollGroup.add(this.ganttService.drawMonthText(offset, monthString));
+    xScrollGroup.add(this.ganttService.drawMonthScaleLine( offset))
   }
 
-  private generateWeekend(zCanvas: ZRenderType, offset: number) {
-      this.ganttService.drawNonworkdayBackground(zCanvas,offset,this.scaleUnit)
+  private generateWeekend(xScrollGroup: Group, offset: number) {
+    xScrollGroup.add(this.ganttService.drawNonworkdayBackground(offset,this.scaleUnit))
+
   }
 
   private generateXscoroll() {
@@ -163,6 +168,10 @@ export class GanttChartComponent implements OnInit {
     xEl.style.width = this.ganttWidth + 'px';
   }
 
+  private generateTaskRow() {
+    this.xScrollGroup.add(this.ganttService.drawTaskRowBackground(this.ganttWidth))
+
+  }
 }
 
 
