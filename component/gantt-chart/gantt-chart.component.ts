@@ -46,9 +46,7 @@ export class GanttChartComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.scaleUnit && this.isAfterViewInited) {
-      this.generateXscoroll()
-      this.initGantt();
-      this.generateScaleData(this.beginMoment, this.endMoment);
+      this.initToy()
     }
   }
 
