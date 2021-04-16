@@ -19,7 +19,7 @@ export class GanttChartComponent implements OnInit {
   /****
    * @description add all zElement be use to on Xscroll
    */
-  xScrollGroup: Group = new Group({name:'xScrollGroup'})
+  xScrollGroup: Group = null;
   @ViewChild('Xscroll', {static: false}) xScroll: ElementRef;
 
   @Input() scaleUnit: GanttChartConfig.GanttScaleUnit = GanttChartConfig.GanttScaleUnit.day;
@@ -112,7 +112,7 @@ export class GanttChartComponent implements OnInit {
 
   private generateScaleData(beginMoment: Date, endMoment: Date) {
     const render: ZRenderType = this.render
-    const xScrollGroup = this.xScrollGroup;
+    const xScrollGroup = this.xScrollGroup = new Group({name:'xScrollGroup'});
     xScrollGroup.add(this.ganttService.drawDateScaleBottomBorder(this.ganttWidth))
     if (beginMoment && endMoment) {
       let handleDate = beginMoment
