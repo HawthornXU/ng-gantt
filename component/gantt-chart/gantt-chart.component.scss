@@ -14,4 +14,15 @@
       height: 1px;
     }
   }
+  .gannt-y-scroll{
+    position: absolute;
+    right: 0;
+    top: 35px;
+    bottom: 17px;
+    width: 18px;
+    overflow-y: auto;
+    > div {
+      width: 1px;
+    }
+  }
 }

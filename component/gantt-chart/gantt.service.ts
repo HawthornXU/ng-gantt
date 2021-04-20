@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GanttChartConfig } from './gantt-chart.define';
-import { Line, Text, ZRenderType, Group ,Rect } from 'zrender';
+import { Line, Text, Group ,Rect } from 'zrender';
 import GanttScaleUnit = GanttChartConfig.GanttScaleUnit;
 import TASK_ROW_HEIGHT = GanttChartConfig.TASK_ROW_HEIGHT;
 import COLOR_CONFIG = GanttChartConfig.COLOR_CONFIG;

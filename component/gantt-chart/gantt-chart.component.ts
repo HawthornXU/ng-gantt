@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { GanttChartConfig } from 'component/gantt-chart/gantt-chart.define';
 import GanttScaleUnit = GanttChartConfig.GanttScaleUnit;
+import TaskType = GanttChartConfig.TaskType;
 import { GanttService } from 'component/gantt-chart/gantt.service';
 import { fromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -15,16 +16,20 @@ import { init, ZRenderType, Group } from 'zrender'
 })
 export class GanttChartComponent implements OnInit {
   @ViewChild('ganttCanvasContainer', {static: false}) ganttCanvasContainer: ElementRef;
+  @ViewChild('Xscroll', {static: false}) xScroll: ElementRef;
+  @ViewChild('Yscroll', {static: false}) yScroll: ElementRef;
+
+  @Input() scaleUnit: GanttChartConfig.GanttScaleUnit = GanttChartConfig.GanttScaleUnit.day;
+  @Input() beginMoment = new Date('2021-01-01');
+  @Input() endMoment = new Date('2021-12-31');
+  @Input() taskList: Array<TaskType> = [];
+
   render: ZRenderType = null;
   /****
    * @description add all zElement be use to on Xscroll
    */
   xScrollGroup: Group = null;
-  @ViewChild('Xscroll', {static: false}) xScroll: ElementRef;
-
-  @Input() scaleUnit: GanttChartConfig.GanttScaleUnit = GanttChartConfig.GanttScaleUnit.day;
-  @Input() beginMoment = new Date('2021-01-01');
-  @Input() endMoment = new Date('2021-12-31');
+  yScrollGroup: Group = null;
   leftOffset = 0;
   isAfterViewInited = false;
 
@@ -37,6 +42,9 @@ export class GanttChartComponent implements OnInit {
   }
 
   get ganttWidth(): number {
+    return this.ganttService.getScaleUnitPixel(this.scaleUnit) * differenceInDays(this.endMoment, this.beginMoment) + 20;
+  }
+  get ganttHeight(): number {
     return this.ganttService.getScaleUnitPixel(this.scaleUnit) * differenceInDays(this.endMoment, this.beginMoment) + 20;
   }
 
@@ -57,8 +65,8 @@ export class GanttChartComponent implements OnInit {
   ngAfterViewInit(): void {
     this.isAfterViewInited = true;
     this.initToy()
-    this.addEventListenerByWindowResize()
-    this.addEventListenerByXScrollElChange()
+    this.addEventListenerByWindowResize();
+    this.addEventListenerByScrollElChange();
   }
 
   ngAfterViewChecked(): void {
@@ -66,8 +74,10 @@ export class GanttChartComponent implements OnInit {
 
   private initToy() {
     this.generateXscoroll()
+    this.generateYscoroll()
     this.initGantt();
     this.generateScaleData(this.beginMoment, this.endMoment);
+    this.yScrollGroup = new Group({name:'yScrollGroup'});
     this.generateTaskRow()
   }
 
@@ -79,10 +89,14 @@ export class GanttChartComponent implements OnInit {
     })
   }
 
-  private addEventListenerByXScrollElChange() {
+  private addEventListenerByScrollElChange() {
     const xScrollEl = this.xScroll.nativeElement
     fromEvent(xScrollEl, 'scroll').pipe().subscribe((e: Event) => {
       this.xScrollGroup.attr({x:-(e.target as Element).scrollLeft ?? 0})
+    })
+    const yScrollEl = this.yScroll.nativeElement
+    fromEvent(yScrollEl, 'scroll').pipe().subscribe((e: Event) => {
+      this.yScrollGroup.attr({y:-(e.target as Element).scrollTop ?? 0})
     })
   }
 
@@ -164,10 +178,14 @@ export class GanttChartComponent implements OnInit {
   private generateXscoroll() {
     const xEl = this.xScroll.nativeElement.children[0];
     xEl.style.width = this.ganttWidth + 'px';
+  }  private generateYscoroll() {
+    const yEl = this.yScroll.nativeElement.children[0];
+    yEl.style.height = this.ganttWidth + 'px';
   }
 
   private generateTaskRow() {
-    this.xScrollGroup.add(this.ganttService.drawTaskRowBackground(this.ganttWidth))
+    const yScrollGroup = this.yScrollGroup.add(this.ganttService.drawTaskRowBackground(this.ganttWidth))
+    this.xScrollGroup.add(yScrollGroup)
 
   }
 }
