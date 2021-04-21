@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { GanttChartConfig } from 'component/gantt-chart/gantt-chart.define';
 import GanttScaleUnit = GanttChartConfig.GanttScaleUnit;
 import TaskType = GanttChartConfig.TaskType;
@@ -18,10 +18,11 @@ export class GanttChartComponent implements OnInit {
   @ViewChild('ganttCanvasContainer', {static: false}) ganttCanvasContainer: ElementRef;
   @ViewChild('Xscroll', {static: false}) xScroll: ElementRef;
   @ViewChild('Yscroll', {static: false}) yScroll: ElementRef;
+  @ViewChild('milestone', {static: false}) milestone: TemplateRef<any>;
 
   @Input() scaleUnit: GanttChartConfig.GanttScaleUnit = GanttChartConfig.GanttScaleUnit.day;
-  @Input() beginMoment = new Date('2021-01-01');
-  @Input() endMoment = new Date('2021-12-31');
+  @Input() beginDate = new Date('2021-01-01');
+  @Input() endDate = new Date('2021-12-31');
   @Input() taskList: Array<TaskType> = [];
 
   render: ZRenderType = null;
@@ -42,10 +43,10 @@ export class GanttChartComponent implements OnInit {
   }
 
   get ganttWidth(): number {
-    return this.ganttService.getScaleUnitPixel(this.scaleUnit) * differenceInDays(this.endMoment, this.beginMoment) + 20;
+    return this.ganttService.getScaleUnitPixel(this.scaleUnit) * differenceInDays(this.endDate, this.beginDate) + 20;
   }
   get ganttHeight(): number {
-    return this.ganttService.getScaleUnitPixel(this.scaleUnit) * differenceInDays(this.endMoment, this.beginMoment) + 20;
+    return this.ganttService.getScaleUnitPixel(this.scaleUnit) * differenceInDays(this.endDate, this.beginDate) + 20;
   }
 
   constructor(private ganttService: GanttService,
@@ -76,9 +77,10 @@ export class GanttChartComponent implements OnInit {
     this.generateXscoroll()
     this.generateYscoroll()
     this.initGantt();
-    this.generateScaleData(this.beginMoment, this.endMoment);
+    this.generateScaleData(this.beginDate, this.endDate);
     this.yScrollGroup = new Group({name:'yScrollGroup'});
-    this.generateTaskRow()
+    this.generateTask()
+    this.xScrollGroup.add(this.yScrollGroup)
   }
 
   private addEventListenerByWindowResize() {
@@ -183,10 +185,16 @@ export class GanttChartComponent implements OnInit {
     yEl.style.height = this.ganttWidth + 'px';
   }
 
-  private generateTaskRow() {
-    const yScrollGroup = this.yScrollGroup.add(this.ganttService.drawTaskRowBackground(this.ganttWidth))
-    this.xScrollGroup.add(yScrollGroup)
+  private generateTask() {
+    const taskList = this.taskList;
 
+    for (let taskIndex = 0; taskIndex < taskList.length; taskIndex++) {
+      let item = taskList[taskIndex]
+      const y = 35.5 + (taskIndex * GanttChartConfig.TASK_ROW_HEIGHT);
+      const x = differenceInDays(item.startDate,this.beginDate) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
+      const width = (differenceInDays(item.endDate,item.startDate)+1) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
+      this.yScrollGroup.add(this.ganttService.drawTask(item.type,x,y,width,this.ganttWidth,item?.color));
+    }
   }
 }
 

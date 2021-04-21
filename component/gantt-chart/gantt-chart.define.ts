@@ -3,7 +3,7 @@ export module GanttChartConfig{
 
   export const BASIC_DAY_PIXEL = 6;
   export const BASIC_TASK_PIXEL = 16;
-  export const TASK_ROW_HEIGHT = 25;
+  export const TASK_ROW_HEIGHT = 29;
 
   export enum GanttScaleUnit {
     day = 'day',
@@ -11,7 +11,7 @@ export module GanttChartConfig{
     month = 'month'
   }
 
-  export interface TaskSourceType {
+  export interface TaskType {
     id: string;
     name?: string;
     startDate: Date;
@@ -19,10 +19,10 @@ export module GanttChartConfig{
     /***
      * @default emun value COLOR_CONFIG.TaskFillColor
      */
-    color: string;
+    color?: string;
     type: TASK_TYPE;
-    isShowChildren?: boolean;
-    children: Array<TaskSourceType>
+    // isShowChildren?: boolean;
+    // children: Array<TaskType>
   }
 
   export enum COLOR_CONFIG {

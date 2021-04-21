@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { GanttChartConfig } from './gantt-chart.define';
-import { Line, Text, Group ,Rect } from 'zrender';
+import { Group, Line, Rect, Text, Image, Element } from 'zrender';
 import GanttScaleUnit = GanttChartConfig.GanttScaleUnit;
 import TASK_ROW_HEIGHT = GanttChartConfig.TASK_ROW_HEIGHT;
 import COLOR_CONFIG = GanttChartConfig.COLOR_CONFIG;
 import ELEMENT_Z_INDEX_TIER = GanttChartConfig.ELEMENT_Z_INDEX_TIER;
+import BASIC_TASK_PIXEL = GanttChartConfig.BASIC_TASK_PIXEL;
+import TASK_TYPE = GanttChartConfig.TASK_TYPE;
 
 @Injectable()
 export class GanttService {
@@ -132,39 +134,91 @@ export class GanttService {
 
   }
 
-  drawTaskRowBackground(totalWidth: number):Group {
-    const rowBackgroundGroup = new Group()
-    for (let rowBeginY = 35.5; rowBeginY < window.screen.height; rowBeginY += TASK_ROW_HEIGHT) {
-      const rect = new Rect({
-        z:ELEMENT_Z_INDEX_TIER.TaskRowBackground,
-        style: {
-          fill: COLOR_CONFIG.TaskRowColor,
-          opacity: 0
+  drawTask(type: TASK_TYPE ,x:number, y:number, taskWidth:number, ganttWidth:number, color?:string){
+    const rowGroup = new Group()
+
+    const raskBackGround = this.drawTaskRowBackground(y,ganttWidth)
+    const task =  this.drawTaskElement(type,x,y,taskWidth,color)
+
+    task.on('mouseover', e => {
+      raskBackGround.trigger('mouseover')
+    })
+    task.on('mouseout', e => {
+      raskBackGround.trigger('mouseout')
+    })
+
+    rowGroup.add(task)
+    rowGroup.add(raskBackGround)
+    return rowGroup
+  }
+
+  private drawTaskElement(type:TASK_TYPE,x:number, y: number,taskWidth:number, color?:string):Element {
+    const taskRelativeY = (GanttChartConfig.TASK_ROW_HEIGHT - GanttChartConfig.BASIC_TASK_PIXEL) / 2
+    if(type==TASK_TYPE.Normal ||type==TASK_TYPE.Abstract){
+     return  new Rect({
+        z:ELEMENT_Z_INDEX_TIER.TaskItem,
+        style:{
+          fill:color??COLOR_CONFIG.TaskFillColor,
+          shadowOffsetX: 1,
+          shadowOffsetY: 2,
+          shadowBlur: 2,
+          shadowColor:'#5170ff30'
         },
-        shape: {
-          x: 0,
-          y: rowBeginY,
-          width: totalWidth,
-          height: TASK_ROW_HEIGHT,
+        shape:{
+          r:3,
+          x,
+          y:y+taskRelativeY,
+          width: taskWidth,
+          height:BASIC_TASK_PIXEL
         },
-      });
-      rect.on('mouseout', e => {
-        rect.attr({
-          style:{
-            opacity: 0
-          }
-        })
+        draggable:'horizontal'
       })
-      rect.on('mouseover', e => {
-        rect.attr({
-          style:{
-            opacity: 1
-          }
-        })
-      })
-      rowBackgroundGroup.add(rect)
     }
-    return rowBackgroundGroup
+    if(type==TASK_TYPE.Milestone){
+      const img = document.createElement("img")
+      img.src = 'milestone.svg'
+      return new Image({
+        x:x,
+        y:y+taskRelativeY,
+        style:{
+          image: img
+        }
+      })
+    }
+
+  }
+
+  private drawTaskRowBackground(y:number, totalWidth: number){
+    const rect = new Rect({
+      z:ELEMENT_Z_INDEX_TIER.TaskRowBackground,
+      style: {
+        fill: COLOR_CONFIG.TaskRowColor,
+        opacity: 0,
+      },
+      shape: {
+        x: 0,
+        y,
+        width: totalWidth,
+        height: TASK_ROW_HEIGHT,
+      },
+      cursor: null,
+    });
+    rect.on('mouseout', e => {
+      rect.attr({
+        style:{
+          opacity: 0
+        }
+      })
+    })
+    rect.on('mouseover', e => {
+      rect.attr({
+        style:{
+          opacity: 1
+        }
+      })
+    })
+
+    return rect
   }
 }
 
