@@ -81,6 +81,7 @@ export class GanttChartComponent implements OnInit {
     this.yScrollGroup = new Group({name:'yScrollGroup'});
     this.generateTask()
     this.xScrollGroup.add(this.yScrollGroup)
+    this.render.add(this.xScrollGroup);
   }
 
   private addEventListenerByWindowResize() {
@@ -125,7 +126,6 @@ export class GanttChartComponent implements OnInit {
 
 
   private generateScaleData(beginMoment: Date, endMoment: Date) {
-    const render: ZRenderType = this.render
     const xScrollGroup = this.xScrollGroup = new Group({name:'xScrollGroup'});
     xScrollGroup.add(this.ganttService.drawDateScaleBottomBorder(this.ganttWidth))
     if (beginMoment && endMoment) {
@@ -136,7 +136,7 @@ export class GanttChartComponent implements OnInit {
         handleDate = addDays(handleDate, 1,);
       }
     }
-    render.add(xScrollGroup)
+
   }
 
 

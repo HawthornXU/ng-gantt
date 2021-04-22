@@ -155,7 +155,7 @@ export class GanttService {
   private drawTaskElement(type:TASK_TYPE,x:number, y: number,taskWidth:number, color?:string):Element {
     const taskRelativeY = (GanttChartConfig.TASK_ROW_HEIGHT - GanttChartConfig.BASIC_TASK_PIXEL) / 2
     if(type==TASK_TYPE.Normal ||type==TASK_TYPE.Abstract){
-     return  new Rect({
+      const taskElement = new Rect({
         z:ELEMENT_Z_INDEX_TIER.TaskItem,
         style:{
           fill:color??COLOR_CONFIG.TaskFillColor,
@@ -173,17 +173,23 @@ export class GanttService {
         },
         draggable:'horizontal'
       })
+      taskElement.on('drag', e=>{
+        // console.log(e);
+      })
+        return taskElement;
     }
     if(type==TASK_TYPE.Milestone){
-      const img = document.createElement("img")
-      img.src = 'milestone.svg'
-      return new Image({
+      const milestone = new Image({
+        z:ELEMENT_Z_INDEX_TIER.TaskItem,
         x:x,
-        y:y+taskRelativeY,
+        // todo '24' replace to automatically computed values
+        y:y+(TASK_ROW_HEIGHT - 24)/2,
         style:{
-          image: img
-        }
+          image: 'milestone.svg'
+        },
+        draggable:'horizontal'
       })
+      return milestone
     }
 
   }
