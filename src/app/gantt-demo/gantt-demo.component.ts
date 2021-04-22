@@ -13,8 +13,8 @@ export class GanttDemoComponent implements OnInit {
 
   gantConfig = {
     scaleUnit: GanttChartConfig.GanttScaleUnit.day,
-    beginMoment: new Date(this.currentYear,1,1),
-    endMoment: new Date(this.currentYear,12,31),
+    beginMoment: new Date(this.currentYear,0,1),
+    endMoment: new Date(this.currentYear,11,31),
     data:[] as Array<GanttChartConfig.TaskType>,
   }
 
@@ -26,50 +26,50 @@ export class GanttDemoComponent implements OnInit {
     this.gantConfig.data= [
       {
         id:'1',
-        startDate:new Date(this.currentYear,1,21),
-        endDate: new Date(this.currentYear,1,21),
+        startDate:new Date(this.currentYear,0,20),
+        endDate: new Date(this.currentYear,0,20),
         type: GanttChartConfig.TASK_TYPE.Normal
       },
             {
         id:'2',
-        startDate:new Date(this.currentYear,1,22),
-        endDate: new Date(this.currentYear,1,27),
+        startDate:new Date(this.currentYear,0,21),
+        endDate: new Date(this.currentYear,0,26),
         type: GanttChartConfig.TASK_TYPE.Abstract
       },
             {
         id:'3',
-        startDate:new Date(this.currentYear,1,22),
-        endDate: new Date(this.currentYear,1,22),
+        startDate:new Date(this.currentYear,0,21),
+        endDate: new Date(this.currentYear,0,21),
         type: GanttChartConfig.TASK_TYPE.Normal
       },
       {
         id:'4',
-        startDate:new Date(this.currentYear,1,23),
-        endDate: new Date(this.currentYear,1,23),
+        startDate:new Date(this.currentYear,0,22),
+        endDate: new Date(this.currentYear,0,22),
         type: GanttChartConfig.TASK_TYPE.Milestone
       },
             {
         id:'5',
-        startDate:new Date(this.currentYear,1,23),
-        endDate: new Date(this.currentYear,1,27),
+        startDate:new Date(this.currentYear,0,22),
+        endDate: new Date(this.currentYear,0,26),
         type: GanttChartConfig.TASK_TYPE.Abstract
       },
             {
         id:'6',
-        startDate:new Date(this.currentYear,1,23),
-        endDate: new Date(this.currentYear,1,23),
+        startDate:new Date(this.currentYear,0,22),
+        endDate: new Date(this.currentYear,0,22),
         type: GanttChartConfig.TASK_TYPE.Normal
       },
             {
         id:'7',
-        startDate:new Date(this.currentYear,1,26),
-        endDate: new Date(this.currentYear,1,26),
+        startDate:new Date(this.currentYear,0,25),
+        endDate: new Date(this.currentYear,0,25),
         type: GanttChartConfig.TASK_TYPE.Normal
       },
             {
         id:'8',
-        startDate:new Date(this.currentYear,1,27),
-        endDate: new Date(this.currentYear,1,27),
+        startDate:new Date(this.currentYear,0,26),
+        endDate: new Date(this.currentYear,0,26),
         type: GanttChartConfig.TASK_TYPE.Normal
       },
     ]
