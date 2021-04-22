@@ -31,7 +31,8 @@ export module GanttChartConfig{
     WeekendColor = '#e9edfa',
     MonthLineColor = '#adb0b8',
     TaskFillColor = '#5e7ce0',
-    TaskRowColor = '#f2f5fc'
+    TaskRowColor = '#f2f5fc',
+    AbstractTaskFillColor = '#cacfd8'
   }
 
   export enum TASK_TYPE {

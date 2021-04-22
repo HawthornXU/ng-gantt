@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { GanttChartConfig } from './gantt-chart.define';
-import { Group, Line, Rect, Text, Image, Element } from 'zrender';
+import { Element, Group, Image, Line, Polyline, Rect, Text } from 'zrender';
 import GanttScaleUnit = GanttChartConfig.GanttScaleUnit;
 import TASK_ROW_HEIGHT = GanttChartConfig.TASK_ROW_HEIGHT;
 import COLOR_CONFIG = GanttChartConfig.COLOR_CONFIG;
 import ELEMENT_Z_INDEX_TIER = GanttChartConfig.ELEMENT_Z_INDEX_TIER;
-import BASIC_TASK_PIXEL = GanttChartConfig.BASIC_TASK_PIXEL;
 import TASK_TYPE = GanttChartConfig.TASK_TYPE;
+import BASIC_TASK_PIXEL = GanttChartConfig.BASIC_TASK_PIXEL;
 
 @Injectable()
 export class GanttService {
@@ -154,7 +154,7 @@ export class GanttService {
 
   private drawTaskElement(type:TASK_TYPE,x:number, y: number,taskWidth:number, color?:string):Element {
     const taskRelativeY = (GanttChartConfig.TASK_ROW_HEIGHT - GanttChartConfig.BASIC_TASK_PIXEL) / 2
-    if(type==TASK_TYPE.Normal ||type==TASK_TYPE.Abstract){
+    if(type==TASK_TYPE.Normal ){
       const taskElement = new Rect({
         z:ELEMENT_Z_INDEX_TIER.TaskItem,
         style:{
@@ -190,6 +190,21 @@ export class GanttService {
         draggable:'horizontal'
       })
       return milestone
+    }
+    if(type == TASK_TYPE.Abstract){
+      const abstractTaskEl = new Polyline({
+        z:ELEMENT_Z_INDEX_TIER.TaskItem,
+        x,
+        y: y + taskRelativeY,
+        style:{
+          fill: COLOR_CONFIG.AbstractTaskFillColor,
+          stroke:null
+        },
+        shape:{
+          points:[[0,0],[taskWidth,0],[taskWidth,BASIC_TASK_PIXEL],[taskWidth - 6, BASIC_TASK_PIXEL/2],[6,BASIC_TASK_PIXEL/2],[0,BASIC_TASK_PIXEL]]
+        }
+      })
+      return abstractTaskEl
     }
 
   }
