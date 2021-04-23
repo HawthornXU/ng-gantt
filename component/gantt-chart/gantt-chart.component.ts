@@ -45,6 +45,7 @@ export class GanttChartComponent implements OnInit {
   get ganttWidth(): number {
     return this.ganttService.getScaleUnitPixel(this.scaleUnit) * differenceInDays(this.endDate, this.beginDate) + 20;
   }
+
   get ganttHeight(): number {
     return this.ganttService.getScaleUnitPixel(this.scaleUnit) * differenceInDays(this.endDate, this.beginDate) + 20;
   }
@@ -78,7 +79,7 @@ export class GanttChartComponent implements OnInit {
     this.generateYscoroll()
     this.initGantt();
     this.generateScaleData(this.beginDate, this.endDate);
-    this.yScrollGroup = new Group({name:'yScrollGroup'});
+    this.yScrollGroup = new Group({name: 'yScrollGroup'});
     this.generateTask()
     this.xScrollGroup.add(this.yScrollGroup)
     this.render.add(this.xScrollGroup);
@@ -95,11 +96,11 @@ export class GanttChartComponent implements OnInit {
   private addEventListenerByScrollElChange() {
     const xScrollEl = this.xScroll.nativeElement
     fromEvent(xScrollEl, 'scroll').pipe().subscribe((e: Event) => {
-      this.xScrollGroup.attr({x:-(e.target as Element).scrollLeft ?? 0})
+      this.xScrollGroup.attr({x: -(e.target as Element).scrollLeft ?? 0})
     })
     const yScrollEl = this.yScroll.nativeElement
     fromEvent(yScrollEl, 'scroll').pipe().subscribe((e: Event) => {
-      this.yScrollGroup.attr({y:-(e.target as Element).scrollTop ?? 0})
+      this.yScrollGroup.attr({y: -(e.target as Element).scrollTop ?? 0})
     })
   }
 
@@ -126,7 +127,7 @@ export class GanttChartComponent implements OnInit {
 
 
   private generateScaleData(beginMoment: Date, endMoment: Date) {
-    const xScrollGroup = this.xScrollGroup = new Group({name:'xScrollGroup'});
+    const xScrollGroup = this.xScrollGroup = new Group({name: 'xScrollGroup'});
     xScrollGroup.add(this.ganttService.drawDateScaleBottomBorder(this.ganttWidth))
     if (beginMoment && endMoment) {
       let handleDate = beginMoment
@@ -138,7 +139,6 @@ export class GanttChartComponent implements OnInit {
     }
 
   }
-
 
 
   private generateDate(xScrollGroup: Group, handleDate: Date, offset: number) {
@@ -159,28 +159,29 @@ export class GanttChartComponent implements OnInit {
     }
 
     if (this.scaleUnit == GanttScaleUnit.day || getDay(handleDate) == 1) {
-      xScrollGroup.add(this.ganttService.drawDayText( offset, dayString,this.scaleUnit));
+      xScrollGroup.add(this.ganttService.drawDayText(offset, dayString, this.scaleUnit));
     }
 
   }
 
 
-
   private generateMonth(xScrollGroup: Group, handleDate: Date, offset: number) {
     const monthString = format(handleDate, 'yyyy-MM');
     xScrollGroup.add(this.ganttService.drawMonthText(offset, monthString));
-    xScrollGroup.add(this.ganttService.drawMonthScaleLine( offset))
+    xScrollGroup.add(this.ganttService.drawMonthScaleLine(offset))
   }
 
   private generateWeekend(xScrollGroup: Group, offset: number) {
-    xScrollGroup.add(this.ganttService.drawNonworkdayBackground(offset,this.scaleUnit))
+    xScrollGroup.add(this.ganttService.drawNonworkdayBackground(offset, this.scaleUnit))
 
   }
 
   private generateXscoroll() {
     const xEl = this.xScroll.nativeElement.children[0];
     xEl.style.width = this.ganttWidth + 'px';
-  }  private generateYscoroll() {
+  }
+
+  private generateYscoroll() {
     const yEl = this.yScroll.nativeElement.children[0];
     yEl.style.height = this.ganttWidth + 'px';
   }
@@ -191,9 +192,9 @@ export class GanttChartComponent implements OnInit {
     for (let taskIndex = 0; taskIndex < taskList.length; taskIndex++) {
       let item = taskList[taskIndex]
       const y = 35.5 + (taskIndex * GanttChartConfig.TASK_ROW_HEIGHT);
-      const x = differenceInDays(item.startDate,this.beginDate) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
-      const width = (differenceInDays(item.endDate,item.startDate)+1) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
-      this.yScrollGroup.add(this.ganttService.drawTask(item.type,x,y,width,this.ganttWidth,item?.color));
+      const x = differenceInDays(item.startDate, this.beginDate) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
+      const width = (differenceInDays(item.endDate, item.startDate) + 1) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
+      this.yScrollGroup.add(this.ganttService.drawTask(item.type, x, y, width, this.ganttWidth, item?.color));
     }
   }
 }

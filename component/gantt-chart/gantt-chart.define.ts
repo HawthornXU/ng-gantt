@@ -1,5 +1,4 @@
-
-export module GanttChartConfig{
+export module GanttChartConfig {
 
   export const BASIC_DAY_PIXEL = 6;
   export const BASIC_TASK_PIXEL = 16;

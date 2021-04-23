@@ -31,7 +31,7 @@ export class GanttService {
     }
   }
 
-  drawMonthText(offset: number, monthString: string):Text {
+  drawMonthText(offset: number, monthString: string): Text {
     const text = new Text({
       style: {
         x: ++offset,
@@ -43,9 +43,9 @@ export class GanttService {
     return text
   }
 
-  drawMonthScaleLine( offset: number):Line {
+  drawMonthScaleLine(offset: number): Line {
     const line = new Line({
-      z:ELEMENT_Z_INDEX_TIER.MonthScaleLine,
+      z: ELEMENT_Z_INDEX_TIER.MonthScaleLine,
       shape: {
         x1: offset + 0.5,
         y1: 35.5,
@@ -60,7 +60,7 @@ export class GanttService {
     return line;
   }
 
-  drawDateScaleBottomBorder(width: number):Line {
+  drawDateScaleBottomBorder(width: number): Line {
     const line = new Line({
       shape: {
         x1: 0,
@@ -92,7 +92,7 @@ export class GanttService {
     return line;
   }
 
-  drawDayText( offset: number, dayString: number, scaleUnit: GanttChartConfig.GanttScaleUnit):Text {
+  drawDayText(offset: number, dayString: number, scaleUnit: GanttChartConfig.GanttScaleUnit): Text {
     const text = new Text({
       style: {
         x: offset + this.getScaleUnitPixel(scaleUnit) / 2,
@@ -107,14 +107,14 @@ export class GanttService {
     return text
   }
 
-  drawNonworkdayBackground( x: number, scaleUnit: GanttChartConfig.GanttScaleUnit):Group {
+  drawNonworkdayBackground(x: number, scaleUnit: GanttChartConfig.GanttScaleUnit): Group {
     let scalePixel = this.getScaleUnitPixel(scaleUnit);
     const backgroundGroup = new Group({
-      silent:true,
+      silent: true,
     })
     for (let lineDashOffset = 1; scalePixel > 0; x++, scalePixel--, lineDashOffset++) {
       const line = new Line({
-        z:ELEMENT_Z_INDEX_TIER.NonWorkDayBackground,
+        z: ELEMENT_Z_INDEX_TIER.NonWorkDayBackground,
         shape: {
           x1: x + 0.5,
           y1: 35.5,
@@ -134,11 +134,11 @@ export class GanttService {
 
   }
 
-  drawTask(type: TASK_TYPE ,x:number, y:number, taskWidth:number, ganttWidth:number, color?:string){
+  drawTask(type: TASK_TYPE, x: number, y: number, taskWidth: number, ganttWidth: number, color?: string) {
     const rowGroup = new Group()
 
-    const raskBackGround = this.drawTaskRowBackground(y,ganttWidth)
-    const task =  this.drawTaskElement(type,x,y,taskWidth,color)
+    const raskBackGround = this.drawTaskRowBackground(y, ganttWidth)
+    const task = this.drawTaskElement(type, x, y, taskWidth, color)
 
     task.on('mouseover', e => {
       raskBackGround.trigger('mouseover')
@@ -152,56 +152,56 @@ export class GanttService {
     return rowGroup
   }
 
-  private drawTaskElement(type:TASK_TYPE,x:number, y: number,taskWidth:number, color?:string):Element {
+  private drawTaskElement(type: TASK_TYPE, x: number, y: number, taskWidth: number, color?: string): Element {
     const taskRelativeY = (GanttChartConfig.TASK_ROW_HEIGHT - GanttChartConfig.BASIC_TASK_PIXEL) / 2
-    if(type==TASK_TYPE.Normal ){
+    if (type == TASK_TYPE.Normal) {
       const taskElement = new Rect({
-        z:ELEMENT_Z_INDEX_TIER.TaskItem,
-        style:{
-          fill:color??COLOR_CONFIG.TaskFillColor,
+        z: ELEMENT_Z_INDEX_TIER.TaskItem,
+        style: {
+          fill: color ?? COLOR_CONFIG.TaskFillColor,
           shadowOffsetX: 1,
           shadowOffsetY: 2,
           shadowBlur: 2,
-          shadowColor:'#5170ff30'
+          shadowColor: '#5170ff30'
         },
-        shape:{
-          r:3,
+        shape: {
+          r: 3,
           x,
-          y:y+taskRelativeY,
+          y: y + taskRelativeY,
           width: taskWidth,
-          height:BASIC_TASK_PIXEL
+          height: BASIC_TASK_PIXEL
         },
-        draggable:'horizontal'
+        draggable: 'horizontal'
       })
-      taskElement.on('drag', e=>{
+      taskElement.on('drag', e => {
         // console.log(e);
       })
-        return taskElement;
+      return taskElement;
     }
-    if(type==TASK_TYPE.Milestone){
+    if (type == TASK_TYPE.Milestone) {
       const milestone = new Image({
-        z:ELEMENT_Z_INDEX_TIER.TaskItem,
-        x:x,
+        z: ELEMENT_Z_INDEX_TIER.TaskItem,
+        x: x,
         // todo '24' replace to automatically computed values
-        y:y+(TASK_ROW_HEIGHT - 24)/2,
-        style:{
+        y: y + (TASK_ROW_HEIGHT - 24) / 2,
+        style: {
           image: 'milestone.svg'
         },
-        draggable:'horizontal'
+        draggable: 'horizontal'
       })
       return milestone
     }
-    if(type == TASK_TYPE.Abstract){
+    if (type == TASK_TYPE.Abstract) {
       const abstractTaskEl = new Polyline({
-        z:ELEMENT_Z_INDEX_TIER.TaskItem,
+        z: ELEMENT_Z_INDEX_TIER.TaskItem,
         x,
         y: y + taskRelativeY,
-        style:{
+        style: {
           fill: COLOR_CONFIG.AbstractTaskFillColor,
-          stroke:null
+          stroke: null
         },
-        shape:{
-          points:[[0,0],[taskWidth,0],[taskWidth,BASIC_TASK_PIXEL],[taskWidth - 6, BASIC_TASK_PIXEL/2],[6,BASIC_TASK_PIXEL/2],[0,BASIC_TASK_PIXEL]]
+        shape: {
+          points: [[0, 0], [taskWidth, 0], [taskWidth, BASIC_TASK_PIXEL],[taskWidth - 6, BASIC_TASK_PIXEL / 3], [6, BASIC_TASK_PIXEL / 3], [0, BASIC_TASK_PIXEL]]
         }
       })
       return abstractTaskEl
@@ -209,9 +209,9 @@ export class GanttService {
 
   }
 
-  private drawTaskRowBackground(y:number, totalWidth: number){
+  private drawTaskRowBackground(y: number, totalWidth: number) {
     const rect = new Rect({
-      z:ELEMENT_Z_INDEX_TIER.TaskRowBackground,
+      z: ELEMENT_Z_INDEX_TIER.TaskRowBackground,
       style: {
         fill: COLOR_CONFIG.TaskRowColor,
         opacity: 0,
@@ -226,14 +226,14 @@ export class GanttService {
     });
     rect.on('mouseout', e => {
       rect.attr({
-        style:{
+        style: {
           opacity: 0
         }
       })
     })
     rect.on('mouseover', e => {
       rect.attr({
-        style:{
+        style: {
           opacity: 1
         }
       })

@@ -4,13 +4,13 @@ import { GanttChartComponent } from './gantt-chart.component';
 import { GanttService } from './gantt.service';
 
 
-
 @NgModule({
   declarations: [GanttChartComponent],
   imports: [
     CommonModule
   ],
-  exports:[GanttChartComponent],
-  providers:[GanttService]
+  exports: [GanttChartComponent],
+  providers: [GanttService]
 })
-export class GanttChartModule { }
+export class GanttChartModule {
+}
