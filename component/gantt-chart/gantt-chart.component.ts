@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { GanttChartConfig } from 'component/gantt-chart/gantt-chart.define';
 import GanttScaleUnit = GanttChartConfig.GanttScaleUnit;
 import TaskType = GanttChartConfig.TaskType;
@@ -59,11 +59,12 @@ export class GanttChartComponent implements OnInit {
   }
 
   get ganttHeight(): number {
-    return  this.taskList.length * TASK_ROW_HEIGHT*window.devicePixelRatio + 100 ;
+    return this.taskList.length * TASK_ROW_HEIGHT * window.devicePixelRatio + 100;
   }
 
   constructor(private ganttService: GanttService,
-              private el: ElementRef) {
+              private el: ElementRef,
+              private cd: ChangeDetectorRef) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -80,9 +81,20 @@ export class GanttChartComponent implements OnInit {
     this.isAfterViewInited = true;
     this.initToy()
     this.addEventListenerByWindowResize();
+    this.addEventListenerByMouseWheel()
   }
 
   ngAfterViewChecked(): void {
+  }
+
+  onYScroll(y: number) {
+    this.scrollTop = y;
+    this.yScrollGroup.attr({y: -y ?? 0})
+  }
+
+  onXScroll(x: number) {
+    this.scrollLeft = x;
+    this.xScrollGroup.attr({x: -x ?? 0})
   }
 
   private initToy() {
@@ -92,7 +104,6 @@ export class GanttChartComponent implements OnInit {
     this.generateTask()
     this.xScrollGroup.add(this.yScrollGroup)
     this.render.add(this.xScrollGroup);
-    this.generateScoroll()
   }
 
   private addEventListenerByWindowResize() {
@@ -103,12 +114,17 @@ export class GanttChartComponent implements OnInit {
     })
   }
 
-  onYScroll(y:number){
-    this.yScrollGroup.attr({y: -y ?? 0})
-  }
+  private addEventListenerByMouseWheel() {
+    const canvasContainer = this.ganttCanvasContainer.nativeElement
+    fromEvent(canvasContainer, 'wheel').subscribe(e => {
+      try {
+        e['zrDelta'] > 0 ? this.scrollTop -= 25 : this.scrollTop += 25;
+        this.cd.markForCheck()
+      } catch (e) {
+        console.warn(e)
+      }
 
-  onXScroll(x:number){
-    this.xScrollGroup.attr({x: -x ?? 0})
+    })
   }
 
   private initGantt() {
@@ -183,22 +199,8 @@ export class GanttChartComponent implements OnInit {
 
   }
 
-  private generateScoroll() {
-    // console.log(this.currentHeight)
-    // console.log(this.ganttHeight)
-    // this.scrollHeight =
-    // this.scrollWidth =
-    // console.log(this.scrollWidth);
-    // this.ganttService.drawXScroll(this.ganttWidth,this.currentWidth)
-    // const xEl = this.xScroll.nativeElement.children[0];
-    // xEl.style.width = this.ganttWidth + 'px';
-    // const yEl = this.yScroll.nativeElement.children[0];
-    // yEl.style.height = this.ganttHeight + 'px';
-  }
-
   private generateTask() {
     const taskList = this.taskList;
-
     for (let taskIndex = 0; taskIndex < taskList.length; taskIndex++) {
       let item = taskList[taskIndex]
       const y = 35.5 + (taskIndex * GanttChartConfig.TASK_ROW_HEIGHT);

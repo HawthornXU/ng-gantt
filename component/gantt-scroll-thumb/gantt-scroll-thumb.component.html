@@ -1,10 +1,12 @@
 <div class="scroll-track scroll-track-x" [ngStyle]="xScrollTrackStyle" #xTrack>
   <div  class="scroll-thumb scroll-x" #xThumb  cdkDrag [ngStyle]="xScrollStyle"
-       cdkDragLockAxis="x" cdkDragBoundary=".scroll-track-x" (cdkDragMoved)="onXThumbMove($event)">
+       cdkDragLockAxis="x" cdkDragBoundary=".scroll-track-x" (cdkDragMoved)="onXThumbMove($event)"
+        [cdkDragFreeDragPosition]="dragPositionX   ">
   </div>
 </div>
 <div class="scroll-track scroll-track-y" [ngStyle]="yScrollTrackStyle" #yTrack>
   <div  class="scroll-thumb scroll-y" #yThumb  cdkDrag [ngStyle]="yScrollStyle"
-       cdkDragLockAxis="y" cdkDragBoundary=".scroll-track-y"  (cdkDragMoved)="onYThumbMove($event)" >
+       cdkDragLockAxis="y" cdkDragBoundary=".scroll-track-y"  (cdkDragMoved)="onYThumbMove($event)"
+        [cdkDragFreeDragPosition]="dragPositionY">
   </div>
 </div>
