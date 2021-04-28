@@ -7,6 +7,7 @@ import { fromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { differenceInDays, isSameDay, addDays, getDate, getDay, format } from 'date-fns';
 import { init, ZRenderType, Group } from 'zrender'
+import TASK_ROW_HEIGHT = GanttChartConfig.TASK_ROW_HEIGHT;
 
 @Component({
   selector: 'ng-gantt-chart',
@@ -25,21 +26,32 @@ export class GanttChartComponent implements OnInit {
   @Input() endDate = new Date('2021-12-31');
   @Input() taskList: Array<TaskType> = [];
 
-  render: ZRenderType = null;
+  private render: ZRenderType = null;
   /****
    * @description add all zElement be use to on Xscroll
    */
-  xScrollGroup: Group = null;
-  yScrollGroup: Group = null;
-  leftOffset = 0;
-  isAfterViewInited = false;
+  private xScrollGroup: Group = null;
+  private yScrollGroup: Group = null;
+  scrollLeft = 0;
+  scrollTop = 0;
+
+  get scrollWidth() {
+    return this.currentWidth / this.ganttWidth * this.currentWidth
+  }
+
+  get scrollHeight() {
+    return this.currentHeight / this.ganttHeight * this.currentHeight
+  };
+
+  private leftOffset = 0;
+  private isAfterViewInited = false;
 
   get currentWidth(): number {
-    return this.el.nativeElement.clientWidth - 18
+    return this.el.nativeElement.clientWidth
   }
 
   get currentHeight(): number {
-    return this.el.nativeElement.clientHeight - 18
+    return this.el.nativeElement.clientHeight
   }
 
   get ganttWidth(): number {
@@ -47,7 +59,7 @@ export class GanttChartComponent implements OnInit {
   }
 
   get ganttHeight(): number {
-    return this.ganttService.getScaleUnitPixel(this.scaleUnit) * differenceInDays(this.endDate, this.beginDate) + 20;
+    return  this.taskList.length * TASK_ROW_HEIGHT*window.devicePixelRatio + 100 ;
   }
 
   constructor(private ganttService: GanttService,
@@ -68,21 +80,19 @@ export class GanttChartComponent implements OnInit {
     this.isAfterViewInited = true;
     this.initToy()
     this.addEventListenerByWindowResize();
-    this.addEventListenerByScrollElChange();
   }
 
   ngAfterViewChecked(): void {
   }
 
   private initToy() {
-    this.generateXscoroll()
-    this.generateYscoroll()
     this.initGantt();
     this.generateScaleData(this.beginDate, this.endDate);
     this.yScrollGroup = new Group({name: 'yScrollGroup'});
     this.generateTask()
     this.xScrollGroup.add(this.yScrollGroup)
     this.render.add(this.xScrollGroup);
+    this.generateScoroll()
   }
 
   private addEventListenerByWindowResize() {
@@ -93,15 +103,12 @@ export class GanttChartComponent implements OnInit {
     })
   }
 
-  private addEventListenerByScrollElChange() {
-    const xScrollEl = this.xScroll.nativeElement
-    fromEvent(xScrollEl, 'scroll').pipe().subscribe((e: Event) => {
-      this.xScrollGroup.attr({x: -(e.target as Element).scrollLeft ?? 0})
-    })
-    const yScrollEl = this.yScroll.nativeElement
-    fromEvent(yScrollEl, 'scroll').pipe().subscribe((e: Event) => {
-      this.yScrollGroup.attr({y: -(e.target as Element).scrollTop ?? 0})
-    })
+  onYScroll(y:number){
+    this.yScrollGroup.attr({y: -y ?? 0})
+  }
+
+  onXScroll(x:number){
+    this.xScrollGroup.attr({x: -x ?? 0})
   }
 
   private initGantt() {
@@ -176,14 +183,17 @@ export class GanttChartComponent implements OnInit {
 
   }
 
-  private generateXscoroll() {
-    const xEl = this.xScroll.nativeElement.children[0];
-    xEl.style.width = this.ganttWidth + 'px';
-  }
-
-  private generateYscoroll() {
-    const yEl = this.yScroll.nativeElement.children[0];
-    yEl.style.height = this.ganttWidth + 'px';
+  private generateScoroll() {
+    // console.log(this.currentHeight)
+    // console.log(this.ganttHeight)
+    // this.scrollHeight =
+    // this.scrollWidth =
+    // console.log(this.scrollWidth);
+    // this.ganttService.drawXScroll(this.ganttWidth,this.currentWidth)
+    // const xEl = this.xScroll.nativeElement.children[0];
+    // xEl.style.width = this.ganttWidth + 'px';
+    // const yEl = this.yScroll.nativeElement.children[0];
+    // yEl.style.height = this.ganttHeight + 'px';
   }
 
   private generateTask() {

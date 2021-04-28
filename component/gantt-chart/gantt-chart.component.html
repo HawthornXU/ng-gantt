@@ -1,7 +1,4 @@
 <div #ganttCanvasContainer></div>
-<div class="gannt-x-scroll" #Xscroll>
-  <div></div>
-</div>
-<div class="gannt-y-scroll" #Yscroll>
-  <div></div>
-</div>
+<gantt-scroll-thumb [totalHeight]="ganttHeight" [totalWidth]="ganttWidth" [viewHeight]="currentHeight"
+                    [viewWidth]="currentWidth" [scrollTrack]="{top:36,bottom:2,left:2, right:2}"
+                    (scrollTopChange)="onYScroll($event)" (scrollLeftChange)="onXScroll($event)"></gantt-scroll-thumb>

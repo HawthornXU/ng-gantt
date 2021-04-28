@@ -31,7 +31,8 @@ export module GanttChartConfig {
     MonthLineColor = '#adb0b8',
     TaskFillColor = '#5e7ce0',
     TaskRowColor = '#f2f5fc',
-    AbstractTaskFillColor = '#cacfd8'
+    AbstractTaskFillColor = '#cacfd8',
+    ScrollThumbDefault = '#cbcdd1'
   }
 
   export enum TASK_TYPE {
@@ -47,8 +48,9 @@ export module GanttChartConfig {
     TaskRowBackground,
     NonWorkDayBackground,
     MonthScaleLine,
-    DateScale,
     TaskItem,
+    DateScale,
+    ScrollThumb
   }
 
 }
