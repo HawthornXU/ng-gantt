@@ -6,9 +6,11 @@ import { GanttService } from 'component/gantt-chart/gantt.service';
 import { fromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { differenceInDays, isSameDay, addDays, getDate, getDay, format } from 'date-fns';
-import { init, ZRenderType, Group } from 'zrender'
+import { init, ZRenderType, Group , registerPainter } from 'zrender'
 import TASK_ROW_HEIGHT = GanttChartConfig.TASK_ROW_HEIGHT;
-
+import CanvasPainter from 'zrender/lib/canvas/Painter';
+// @ts-ignore   fix error Renderer 'undefined' is not imported. Please import it first.
+registerPainter('canvas', CanvasPainter)
 @Component({
   selector: 'ng-gantt-chart',
   templateUrl: './gantt-chart.component.html',
@@ -89,12 +91,16 @@ export class GanttChartComponent implements OnInit {
 
   onYScroll(y: number) {
     this.scrollTop = y;
-    this.yScrollGroup.attr({y: -y ?? 0})
+    if(this.yScrollGroup!=null){
+      this.yScrollGroup.attr({y: -y ?? 0})
+    }
   }
 
   onXScroll(x: number) {
     this.scrollLeft = x;
-    this.xScrollGroup.attr({x: -x ?? 0})
+    if(this.xScrollGroup!=null) {
+      this.xScrollGroup.attr({x: -x ?? 0})
+    }
   }
 
   private initToy() {
