@@ -16,7 +16,7 @@ registerPainter('canvas', CanvasPainter)
   selector: 'ng-gantt-chart',
   templateUrl: './gantt-chart.component.html',
   styleUrls: ['./gantt-chart.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GanttChartComponent implements OnInit {
   @ViewChild('ganttCanvasContainer', {static: false}) ganttCanvasContainer: ElementRef;
@@ -54,7 +54,7 @@ export class GanttChartComponent implements OnInit {
   }
 
   get ganttHeight(): number {
-    return this.taskList.length * TASK_ROW_HEIGHT * window.devicePixelRatio + 100;
+    return this.taskList.length * TASK_ROW_HEIGHT  + 100;
   }
 
   constructor(private ganttService: GanttService,
@@ -106,7 +106,7 @@ export class GanttChartComponent implements OnInit {
   }
 
   private addEventListenerByWindowResize() {
-    fromEvent(window, 'resize').pipe(debounceTime(200)).subscribe(e => {
+    fromEvent(window, 'resize').pipe(debounceTime(100)).subscribe(e => {
       this.initContainer();
       this.render.resize({width: this.viewWidth, height: this.viewHeight})
       this.render.refresh()
@@ -121,7 +121,7 @@ export class GanttChartComponent implements OnInit {
       }
       try {
         e['zrDelta'] > 0 ? this.scrollTop -= 25 : this.scrollTop += 25;
-        this.cd.markForCheck()
+        // this.cd.markForCheck()
       } catch (e) {
         console.warn(e)
       }

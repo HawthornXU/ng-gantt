@@ -1,12 +1,12 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { fromEvent, merge, Observable, of, Subject } from 'rxjs';
-import { debounceTime, filter, map, mapTo, pairwise, throttleTime } from 'rxjs/operators';
+import { debounceTime, filter, pairwise, throttleTime } from 'rxjs/operators';
 
 @Component({
   selector: 'gantt-scroll-thumb',
   templateUrl: './gantt-scroll-thumb.component.html',
   styleUrls: ['./gantt-scroll-thumb.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GanttScrollThumbComponent implements OnInit, OnChanges, AfterViewInit {
 
@@ -85,7 +85,7 @@ export class GanttScrollThumbComponent implements OnInit, OnChanges, AfterViewIn
   }
 
   private addEventListenerByWindowResize() {
-    merge(of(0), fromEvent(window, 'resize')).pipe(debounceTime(80)).subscribe(res => {
+    merge(of(0), fromEvent(window, 'resize')).pipe(debounceTime(200)).subscribe(res => {
       if (this.viewHeight < this.totalHeight) {
         this.yScrollStyle.height = this.viewHeight / this.totalHeight * this.yTrack.nativeElement.clientHeight + 'px'
       }
@@ -93,7 +93,7 @@ export class GanttScrollThumbComponent implements OnInit, OnChanges, AfterViewIn
       if (this.viewWidth < this.totalWidth) {
         this.xScrollStyle.width = this.viewWidth / this.totalWidth * this.xTrack.nativeElement.clientWidth + 'px'
       }
-      this.cd.detectChanges()
+      // this.cd.detectChanges()
     })
   }
 
