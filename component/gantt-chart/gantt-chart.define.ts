@@ -1,8 +1,8 @@
 export module GanttChartConfig {
 
-  export const BASIC_DAY_PIXEL = 6;
-  export const BASIC_TASK_PIXEL = 16;
-  export const TASK_ROW_HEIGHT = 29;
+  export const BASIC_DAY_PIXEL = 5;
+  export const BASIC_TASK_PIXEL = 12;
+  export const TASK_ROW_HEIGHT = 21;
 
   export enum GanttScaleUnit {
     day = 'day',

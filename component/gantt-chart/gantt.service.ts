@@ -124,7 +124,7 @@ export class GanttService {
         cursor: null,
         style: {
           stroke: GanttChartConfig.COLOR_CONFIG.WeekendColor,
-          lineDash: [1, 5],
+          lineDash: [1.2, 5],
           lineDashOffset: lineDashOffset
         }
       })
