@@ -36,13 +36,14 @@ export class GanttScrollThumbComponent implements OnInit, OnChanges, AfterViewIn
   @Input() set scrollTop(value: number) {
     this.onHostWheelMouse(value)
   }
+
   private _scrollTop = 0
   @Output() scrollTopChange: EventEmitter<number> = new EventEmitter<number>();
   @Input() scrollLeft: number = 0;
   @Output() scrollLeftChange: EventEmitter<number> = new EventEmitter<number>();
 
   dragPositionY = {y: 0, x: 0}
-  dragPositionX = {x: 0 , y: 0}
+  dragPositionX = {x: 0, y: 0}
 
   xScrollTrackStyle = null
   yScrollTrackStyle = null
@@ -85,8 +86,13 @@ export class GanttScrollThumbComponent implements OnInit, OnChanges, AfterViewIn
 
   private addEventListenerByWindowResize() {
     merge(of(0), fromEvent(window, 'resize')).pipe(debounceTime(80)).subscribe(res => {
-      this.yScrollStyle.height = this.viewHeight / this.totalHeight * this.yTrack.nativeElement.clientHeight + 'px'
-      this.xScrollStyle.width = this.viewWidth / this.totalWidth * this.xTrack.nativeElement.clientWidth + 'px'
+      if (this.viewHeight < this.totalHeight) {
+        this.yScrollStyle.height = this.viewHeight / this.totalHeight * this.yTrack.nativeElement.clientHeight + 'px'
+      }
+
+      if (this.viewWidth < this.totalWidth) {
+        this.xScrollStyle.width = this.viewWidth / this.totalWidth * this.xTrack.nativeElement.clientWidth + 'px'
+      }
       this.cd.detectChanges()
     })
   }
@@ -128,7 +134,10 @@ export class GanttScrollThumbComponent implements OnInit, OnChanges, AfterViewIn
     return Number(x) / (this.viewWidth / this.totalWidth)
   }
 
-  private onHostWheelMouse(value:number){
+  private onHostWheelMouse(value: number) {
+    if (this.yTrack == null) {
+      return;
+    }
     // do update Output
     if (value < 0) {
       value = 0

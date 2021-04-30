@@ -6,11 +6,12 @@ import { GanttService } from 'component/gantt-chart/gantt.service';
 import { fromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { differenceInDays, isSameDay, addDays, getDate, getDay, format } from 'date-fns';
-import { init, ZRenderType, Group , registerPainter } from 'zrender'
+import { init, ZRenderType, Group, registerPainter } from 'zrender'
 import TASK_ROW_HEIGHT = GanttChartConfig.TASK_ROW_HEIGHT;
 import CanvasPainter from 'zrender/lib/canvas/Painter';
 // @ts-ignore   fix error Renderer 'undefined' is not imported. Please import it first.
 registerPainter('canvas', CanvasPainter)
+
 @Component({
   selector: 'ng-gantt-chart',
   templateUrl: './gantt-chart.component.html',
@@ -37,22 +38,14 @@ export class GanttChartComponent implements OnInit {
   scrollLeft = 0;
   scrollTop = 0;
 
-  get scrollWidth() {
-    return this.currentWidth / this.ganttWidth * this.currentWidth
-  }
-
-  get scrollHeight() {
-    return this.currentHeight / this.ganttHeight * this.currentHeight
-  };
-
   private leftOffset = 0;
   private isAfterViewInited = false;
 
-  get currentWidth(): number {
+  get viewWidth(): number {
     return this.el.nativeElement.clientWidth
   }
 
-  get currentHeight(): number {
+  get viewHeight(): number {
     return this.el.nativeElement.clientHeight
   }
 
@@ -91,14 +84,14 @@ export class GanttChartComponent implements OnInit {
 
   onYScroll(y: number) {
     this.scrollTop = y;
-    if(this.yScrollGroup!=null){
+    if (this.yScrollGroup != null) {
       this.yScrollGroup.attr({y: -y ?? 0})
     }
   }
 
   onXScroll(x: number) {
     this.scrollLeft = x;
-    if(this.xScrollGroup!=null) {
+    if (this.xScrollGroup != null) {
       this.xScrollGroup.attr({x: -x ?? 0})
     }
   }
@@ -115,7 +108,7 @@ export class GanttChartComponent implements OnInit {
   private addEventListenerByWindowResize() {
     fromEvent(window, 'resize').pipe(debounceTime(200)).subscribe(e => {
       this.initContainer();
-      this.render.resize({width: this.currentWidth, height: this.currentHeight})
+      this.render.resize({width: this.viewWidth, height: this.viewHeight})
       this.render.refresh()
     })
   }
@@ -123,6 +116,9 @@ export class GanttChartComponent implements OnInit {
   private addEventListenerByMouseWheel() {
     const canvasContainer = this.ganttCanvasContainer.nativeElement
     fromEvent(canvasContainer, 'wheel').subscribe(e => {
+      if (this.viewHeight >= this.ganttHeight) {
+        return
+      }
       try {
         e['zrDelta'] > 0 ? this.scrollTop -= 25 : this.scrollTop += 25;
         this.cd.markForCheck()
@@ -139,14 +135,14 @@ export class GanttChartComponent implements OnInit {
 
   }
 
-  private initContainer(width = this.currentWidth, height = this.currentHeight): HTMLElement {
+  private initContainer(width = this.viewWidth, height = this.viewHeight): HTMLElement {
     const container = this.ganttCanvasContainer.nativeElement;
     container.style.width = width + 'px'
     container.style.height = height + 'px'
     return container
   }
 
-  private initZCanvas(container: HTMLElement, width = this.currentWidth, height = this.currentHeight) {
+  private initZCanvas(container: HTMLElement, width = this.viewWidth, height = this.viewHeight) {
     this.render = init(container, {
       devicePixelRatio: window.devicePixelRatio,
       width,

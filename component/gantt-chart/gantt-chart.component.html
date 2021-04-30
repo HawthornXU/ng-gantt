@@ -1,6 +1,6 @@
 <div #ganttCanvasContainer></div>
-<gantt-scroll-thumb [totalHeight]="ganttHeight" [totalWidth]="ganttWidth" [viewHeight]="currentHeight"
-                    [viewWidth]="currentWidth" [scrollTrack]="{top:36,bottom:2,left:2, right:2}"
+<gantt-scroll-thumb [totalHeight]="ganttHeight" [totalWidth]="ganttWidth" [viewHeight]="viewHeight"
+                    [viewWidth]="viewWidth" [scrollTrack]="{top:36,bottom:2,left:2, right:2}"
                     (scrollTopChange)="onYScroll($event)" (scrollLeftChange)="onXScroll($event)"
                     [scrollTop]="scrollTop" [scrollLeft]="scrollLeft"
 ></gantt-scroll-thumb>
