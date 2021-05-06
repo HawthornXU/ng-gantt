@@ -32,7 +32,7 @@ export module GanttChartConfig {
     TaskFillColor = '#5e7ce0',
     TaskRowColor = '#f2f5fc',
     AbstractTaskFillColor = '#cacfd8',
-    ScrollThumbDefault = '#cbcdd1'
+    GanttBackgroundColor = '#fff'
   }
 
   export enum TASK_TYPE {

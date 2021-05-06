@@ -33,6 +33,7 @@ export class GanttService {
 
   drawMonthText(offset: number, monthString: string): Text {
     const text = new Text({
+      z: ELEMENT_Z_INDEX_TIER.DateScale,
       style: {
         x: ++offset,
         y: 2,
@@ -60,8 +61,22 @@ export class GanttService {
     return line;
   }
 
-  drawDateScaleBottomBorder(width: number): Line {
+  drawDateScaleBottomBorder(width: number): Group {
+    const group = new Group()
+    const rect = new Rect({
+      z: ELEMENT_Z_INDEX_TIER.DateScale,
+      style: {
+        fill: COLOR_CONFIG.GanttBackgroundColor
+      },
+      shape:{
+        x:0,
+        y:0,
+        width,
+        height:35.5
+      }
+    })
     const line = new Line({
+      z: ELEMENT_Z_INDEX_TIER.DateScale,
       shape: {
         x1: 0,
         y1: 35.5,
@@ -73,11 +88,14 @@ export class GanttService {
         stroke: GanttChartConfig.COLOR_CONFIG.DateLineColor,
       }
     })
-    return line
+    group.add(rect)
+    group.add(line)
+    return group
   }
 
   drawDateScaleLeftBorder(offset: number): Line {
     const line = new Line({
+      z: ELEMENT_Z_INDEX_TIER.DateScale,
       shape: {
         x1: offset + 0.5,
         y1: 18,
@@ -94,6 +112,7 @@ export class GanttService {
 
   drawDayText(offset: number, dayString: number, scaleUnit: GanttChartConfig.GanttScaleUnit): Text {
     const text = new Text({
+      z: ELEMENT_Z_INDEX_TIER.DateScale,
       style: {
         x: offset + this.getScaleUnitPixel(scaleUnit) / 2,
         y: 20,
