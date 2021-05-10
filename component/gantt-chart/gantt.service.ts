@@ -7,9 +7,12 @@ import COLOR_CONFIG = GanttChartConfig.COLOR_CONFIG;
 import ELEMENT_Z_INDEX_TIER = GanttChartConfig.ELEMENT_Z_INDEX_TIER;
 import TASK_TYPE = GanttChartConfig.TASK_TYPE;
 import BASIC_TASK_PIXEL = GanttChartConfig.BASIC_TASK_PIXEL;
+import TaskType = GanttChartConfig.TaskType;
 
 @Injectable()
 export class GanttService {
+
+  public scaleUnit = GanttChartConfig.GanttScaleUnit.day;
 
   constructor() {
   }
@@ -68,11 +71,11 @@ export class GanttService {
       style: {
         fill: COLOR_CONFIG.GanttBackgroundColor
       },
-      shape:{
-        x:0,
-        y:0,
+      shape: {
+        x: 0,
+        y: 0,
         width,
-        height:35.5
+        height: 35.5
       }
     })
     const line = new Line({
@@ -98,9 +101,9 @@ export class GanttService {
       z: ELEMENT_Z_INDEX_TIER.DateScale,
       shape: {
         x1: offset + 0.5,
-        y1: 18,
+        y1: GanttChartConfig.DAY_SCALE_START_Y_PIXEL,
         x2: offset + 0.5,
-        y2: 35,
+        y2: GanttChartConfig.DAY_SCALE_END_Y_PIXEL,
       },
       cursor: null,
       style: {
@@ -153,22 +156,48 @@ export class GanttService {
 
   }
 
-  drawTask(type: TASK_TYPE, x: number, y: number, taskWidth: number, ganttWidth: number, color?: string) {
+  drawTask(type: TASK_TYPE, x: number, y: number, taskWidth: number, ganttWidth: number, xScrollGroup: Group, color?: string,) {
     const rowGroup = new Group()
 
     const raskBackGround = this.drawTaskRowBackground(y, ganttWidth)
     const task = this.drawTaskElement(type, x, y, taskWidth, color)
 
+    let highlightDateMark = this.drawHighlightDateMark(x, taskWidth);
     task.on('mouseover', e => {
-      raskBackGround.trigger('mouseover')
+      raskBackGround.trigger('mouseover');
+      xScrollGroup.add(highlightDateMark)
+
     })
     task.on('mouseout', e => {
       raskBackGround.trigger('mouseout')
+      xScrollGroup.remove(highlightDateMark)
     })
 
     rowGroup.add(task)
     rowGroup.add(raskBackGround)
+
     return rowGroup
+  }
+
+  private drawHighlightDateMark( x:number, taskWidth: number): Group {
+    const group = new Group()
+    const markRect = new Rect({
+      z:ELEMENT_Z_INDEX_TIER.DateScale,
+      style:{
+        stroke:COLOR_CONFIG.DateMarkColor,
+        fill: null,
+        lineDash: [6, 3]
+      },
+      shape:{
+        x: x-1,
+        y: GanttChartConfig.DAY_SCALE_START_Y_PIXEL - 4,
+        width: taskWidth+2,
+        height: GanttChartConfig.DAY_SCALE_END_Y_PIXEL - GanttChartConfig.DAY_SCALE_START_Y_PIXEL + 4,
+      }
+    })
+    group.add(markRect)
+
+    return group
   }
 
   private drawTaskElement(type: TASK_TYPE, x: number, y: number, taskWidth: number, color?: string): Element {
@@ -202,7 +231,7 @@ export class GanttService {
         z: ELEMENT_Z_INDEX_TIER.TaskItem,
         x: x,
         // todo '24' replace to automatically computed values
-        y: y + (TASK_ROW_HEIGHT - 24) / 2,
+        y: y + (TASK_ROW_HEIGHT - 22) / 2,
         style: {
           image: 'milestone.svg'
         },
@@ -220,7 +249,7 @@ export class GanttService {
           stroke: null
         },
         shape: {
-          points: [[0, 0], [taskWidth, 0], [taskWidth, BASIC_TASK_PIXEL],[taskWidth - 6, BASIC_TASK_PIXEL / 3], [6, BASIC_TASK_PIXEL / 3], [0, BASIC_TASK_PIXEL]]
+          points: [[0, 0], [taskWidth, 0], [taskWidth, BASIC_TASK_PIXEL], [taskWidth - 6, BASIC_TASK_PIXEL / 3], [6, BASIC_TASK_PIXEL / 3], [0, BASIC_TASK_PIXEL]]
         }
       })
       return abstractTaskEl

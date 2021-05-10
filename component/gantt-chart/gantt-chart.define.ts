@@ -3,6 +3,8 @@ export module GanttChartConfig {
   export const BASIC_DAY_PIXEL = 5;
   export const BASIC_TASK_PIXEL = 12;
   export const TASK_ROW_HEIGHT = 21;
+  export const DAY_SCALE_START_Y_PIXEL = 18;
+  export const DAY_SCALE_END_Y_PIXEL = 35;
 
   export enum GanttScaleUnit {
     day = 'day',
@@ -30,6 +32,7 @@ export module GanttChartConfig {
     WeekendColor = '#e9edfa',
     MonthLineColor = '#adb0b8',
     TaskFillColor = '#5e7ce0',
+    DateMarkColor = '#2c4ab8',
     TaskRowColor = '#f2f5fc',
     AbstractTaskFillColor = '#cacfd8',
     GanttBackgroundColor = '#fff'
@@ -50,7 +53,6 @@ export module GanttChartConfig {
     MonthScaleLine,
     TaskItem,
     DateScale,
-    ScrollThumb
   }
 
 }

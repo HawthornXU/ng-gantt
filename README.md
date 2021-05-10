@@ -2,7 +2,7 @@
 
 A powerful Angular gantt-chart component based on [Zrender](https://github.com/ecomfe/zrender)
 
-[![](https://img.shields.io/badge/%3C%2F%3E-Angular-blue)](https://angular.io)[![](https://img.shields.io/badge/demo-gantt--chart-blue)](https://hawthornxu.github.io)
+[![](https://img.shields.io/badge/%3C%2F%3E-Angular-blue)](https://angular.io)  [![](https://img.shields.io/badge/demo-gantt--chart-blue)](https://hawthornxu.github.io)
 
 ## Features
 

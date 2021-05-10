@@ -24,7 +24,14 @@ export class GanttChartComponent implements OnInit {
   @ViewChild('Yscroll', {static: false}) yScroll: ElementRef;
   @ViewChild('milestone', {static: false}) milestone: TemplateRef<any>;
 
-  @Input() scaleUnit: GanttChartConfig.GanttScaleUnit = GanttChartConfig.GanttScaleUnit.day;
+  @Input() set scaleUnit(value: GanttChartConfig.GanttScaleUnit){
+    this.ganttService.scaleUnit = value;
+  }
+
+  get scaleUnit(): GanttChartConfig.GanttScaleUnit {
+    return this.ganttService.scaleUnit;
+  }
+
   @Input() beginDate = new Date('2021-01-01');
   @Input() endDate = new Date('2021-12-31');
   @Input() taskList: Array<TaskType> = [];
@@ -198,7 +205,6 @@ export class GanttChartComponent implements OnInit {
 
   private generateWeekend(xScrollGroup: Group, offset: number) {
     xScrollGroup.add(this.ganttService.drawNonworkdayBackground(offset, this.scaleUnit))
-
   }
 
   private generateTask() {
@@ -208,7 +214,7 @@ export class GanttChartComponent implements OnInit {
       const y = 35.5 + (taskIndex * GanttChartConfig.TASK_ROW_HEIGHT);
       const x = differenceInDays(item.startDate, this.beginDate) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
       const width = (differenceInDays(item.endDate, item.startDate) + 1) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
-      this.yScrollGroup.add(this.ganttService.drawTask(item.type, x, y, width, this.ganttWidth, item?.color));
+      this.yScrollGroup.add(this.ganttService.drawTask(item.type, x, y, width, this.ganttWidth,this.xScrollGroup, item?.color));
     }
   }
 }
