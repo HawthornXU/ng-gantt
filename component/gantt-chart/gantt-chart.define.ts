@@ -32,7 +32,7 @@ export module GanttChartConfig {
     WeekendColor = '#e9edfa',
     MonthLineColor = '#adb0b8',
     TaskFillColor = '#5e7ce0',
-    DateMarkColor = '#2c4ab8',
+    DateMarkColor = '#5e7ce0',
     TaskRowColor = '#f2f5fc',
     AbstractTaskFillColor = '#cacfd8',
     GanttBackgroundColor = '#fff'

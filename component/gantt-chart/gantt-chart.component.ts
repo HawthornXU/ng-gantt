@@ -213,8 +213,7 @@ export class GanttChartComponent implements OnInit {
       let item = taskList[taskIndex]
       const y = 35.5 + (taskIndex * GanttChartConfig.TASK_ROW_HEIGHT);
       const x = differenceInDays(item.startDate, this.beginDate) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
-      const width = (differenceInDays(item.endDate, item.startDate) + 1) * this.ganttService.getScaleUnitPixel(this.scaleUnit);
-      this.yScrollGroup.add(this.ganttService.drawTask(item.type, x, y, width, this.ganttWidth,this.xScrollGroup, item?.color));
+      this.yScrollGroup.add(this.ganttService.drawTask(item.type,x,  y,  this.ganttWidth,this.xScrollGroup,item));
     }
   }
 }

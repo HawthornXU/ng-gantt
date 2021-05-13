@@ -8,6 +8,7 @@ import ELEMENT_Z_INDEX_TIER = GanttChartConfig.ELEMENT_Z_INDEX_TIER;
 import TASK_TYPE = GanttChartConfig.TASK_TYPE;
 import BASIC_TASK_PIXEL = GanttChartConfig.BASIC_TASK_PIXEL;
 import TaskType = GanttChartConfig.TaskType;
+import { differenceInDays } from "date-fns";
 
 @Injectable()
 export class GanttService {
@@ -156,13 +157,15 @@ export class GanttService {
 
   }
 
-  drawTask(type: TASK_TYPE, x: number, y: number, taskWidth: number, ganttWidth: number, xScrollGroup: Group, color?: string,) {
+  drawTask(type: TASK_TYPE,x:number, y: number,  ganttWidth: number, xScrollGroup: Group, taskItem: TaskType) {
+
+    const width = (differenceInDays(taskItem.endDate, taskItem.startDate) + 1) * this.getScaleUnitPixel(this.scaleUnit);
     const rowGroup = new Group()
 
     const raskBackGround = this.drawTaskRowBackground(y, ganttWidth)
-    const task = this.drawTaskElement(type, x, y, taskWidth, color)
+    const task = this.drawTaskElement(type, x, y, width, taskItem.color)
 
-    let highlightDateMark = this.drawHighlightDateMark(x, taskWidth);
+    let highlightDateMark = this.drawHighlightDateMark(x, width);
     task.on('mouseover', e => {
       raskBackGround.trigger('mouseover');
       xScrollGroup.add(highlightDateMark)
@@ -184,15 +187,14 @@ export class GanttService {
     const markRect = new Rect({
       z:ELEMENT_Z_INDEX_TIER.DateScale,
       style:{
-        stroke:COLOR_CONFIG.DateMarkColor,
-        fill: null,
-        lineDash: [6, 3]
+        fill: COLOR_CONFIG.DateMarkColor,
       },
       shape:{
-        x: x-1,
-        y: GanttChartConfig.DAY_SCALE_START_Y_PIXEL - 4,
-        width: taskWidth+2,
-        height: GanttChartConfig.DAY_SCALE_END_Y_PIXEL - GanttChartConfig.DAY_SCALE_START_Y_PIXEL + 4,
+        r: 4,
+        x: x,
+        y: GanttChartConfig.DAY_SCALE_START_Y_PIXEL,
+        width: taskWidth,
+        height: GanttChartConfig.DAY_SCALE_END_Y_PIXEL - GanttChartConfig.DAY_SCALE_START_Y_PIXEL ,
       }
     })
     group.add(markRect)
@@ -222,7 +224,7 @@ export class GanttService {
         draggable: 'horizontal'
       })
       taskElement.on('drag', e => {
-        // console.log(e);
+        console.log(e);
       })
       return taskElement;
     }
@@ -261,8 +263,8 @@ export class GanttService {
     const rect = new Rect({
       z: ELEMENT_Z_INDEX_TIER.TaskRowBackground,
       style: {
-        fill: COLOR_CONFIG.TaskRowColor,
-        opacity: 0,
+        fill: 'transparent',
+        // opacity: 0,
       },
       shape: {
         x: 0,
@@ -275,14 +277,14 @@ export class GanttService {
     rect.on('mouseout', e => {
       rect.attr({
         style: {
-          opacity: 0
+          fill: 'transparent'
         }
       })
     })
     rect.on('mouseover', e => {
       rect.attr({
         style: {
-          opacity: 1
+          fill: COLOR_CONFIG.TaskRowColor
         }
       })
     })
